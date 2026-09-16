@@ -1,19 +1,13 @@
-from database import get_connection
+from database import create_student
 
 
-with get_connection() as connection:
-    with connection.cursor() as cursor:
-        cursor.execute(
-            """
-            SELECT id, name, email, created_at
-            FROM students
-            ORDER BY id;
-            """
-        )
+name = input("Student name: ").strip()
+email = input("Student email: ").strip()
 
-        students = cursor.fetchall()
-
-
-for student in students:
-    print(student)
-    
+if not name:
+    print("Error: student name cannot be empty.")
+elif not email:
+    print("Error: student email cannot be empty.")
+else:
+    create_student(name, email)
+    print("Student registered successfully.")

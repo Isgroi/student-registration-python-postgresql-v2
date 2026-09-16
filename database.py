@@ -14,4 +14,15 @@ def get_connection():
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
     )
-    
+
+
+def create_student(name, email):
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                INSERT INTO students (name, email)
+                VALUES (%s, %s);
+                """,
+                (name, email),
+            )
