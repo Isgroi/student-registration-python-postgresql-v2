@@ -36,4 +36,19 @@ def list_students():
                 ORDER BY id;
                 """
             )
+            return cursor.fetchall()
+def search_students(term):
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT id, name, surname, email
+                FROM students
+                WHERE CAST(id AS TEXT) = %s
+                   OR name ILIKE %s
+                   OR surname ILIKE %s
+                ORDER BY id;
+                """,
+                (term, f"%{term}%", f"%{term}%"),
+            )
             return cursor.fetchall()          

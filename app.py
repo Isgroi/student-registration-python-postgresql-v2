@@ -4,7 +4,7 @@ import unicodedata
 from rich.console import Console
 from rich.table import Table
 
-from database import create_student, list_students
+from database import create_student, list_students, search_students
 
 
 def normalize_text(value):
@@ -50,15 +50,48 @@ def show_students():
         return
 
     table = Table(title="Alunos cadastrados")
-
     table.add_column("ID", justify="right", style="cyan")
     table.add_column("Nome", style="green")
     table.add_column("Sobrenome", style="green")
     table.add_column("E-mail", style="yellow")
 
-    for student in students:
-        student_id, name, surname, email = student
-        table.add_row(str(student_id), name, surname, email)
+    for student_id, name, surname, email in students:
+        table.add_row(
+            str(student_id),
+            name,
+            surname,
+            email,
+        )
+
+    Console().print(table)
+
+
+def search_student():
+    term = input("Digite o ID, nome ou sobrenome: ").strip()
+
+    if not term:
+        print("Erro: informe algo para pesquisar.")
+        return
+
+    students = search_students(term)
+
+    if not students:
+        print("Nenhum aluno encontrado.")
+        return
+
+    table = Table(title="Resultado da busca")
+    table.add_column("ID", justify="right", style="cyan")
+    table.add_column("Nome", style="green")
+    table.add_column("Sobrenome", style="green")
+    table.add_column("E-mail", style="yellow")
+
+    for student_id, name, surname, email in students:
+        table.add_row(
+            str(student_id),
+            name,
+            surname,
+            email,
+        )
 
     Console().print(table)
 
@@ -67,6 +100,7 @@ while True:
     print("\n=== Registro de Alunos ===")
     print("1 - Cadastrar aluno")
     print("2 - Listar alunos")
+    print("3 - Buscar aluno")
     print("0 - Sair")
 
     option = input("Escolha uma opção: ").strip()
@@ -75,6 +109,8 @@ while True:
         register_student()
     elif option == "2":
         show_students()
+    elif option == "3":
+        search_student()
     elif option == "0":
         print("Programa encerrado.")
         break
