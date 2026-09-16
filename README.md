@@ -24,3 +24,7 @@ A fresh student registration project built from scratch while learning Python, P
 source .venv/bin/activate
 python app.py
 ```
+
+## Development Status
+
+Project environment configured with Python, PostgreSQL, Git, and VS Code.
