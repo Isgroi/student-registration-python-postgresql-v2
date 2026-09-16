@@ -1,0 +1,7 @@
+markdown-it-py==4.2.0
+mdurl==0.1.2
+psycopg==3.3.5
+psycopg-binary==3.3.5
+Pygments==2.21.0
+python-dotenv==1.2.3
+rich==15.0.0
