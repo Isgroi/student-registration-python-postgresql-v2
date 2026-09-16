@@ -25,16 +25,15 @@ def create_student(name, surname, email):
                 """,
                 (name, surname, email),
             )
-            
+
 def list_students():
     with get_connection() as connection:
         with connection.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT id, name, email, created_at
+                SELECT id, name, surname, email
                 FROM students
                 ORDER BY id;
                 """
             )
-            return cursor.fetchall()            
-            
+            return cursor.fetchall()          

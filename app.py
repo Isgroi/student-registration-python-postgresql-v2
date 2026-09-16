@@ -1,7 +1,10 @@
 import re
 import unicodedata
 
-from database import create_student
+from rich.console import Console
+from rich.table import Table
+
+from database import create_student, list_students
 
 
 def normalize_text(value):
@@ -16,27 +19,58 @@ def is_valid_email(email):
     return re.match(pattern, email) is not None
 
 
-name = input("Nome: ").strip()
-surname = input("Sobrenome: ").strip()
+def register_student():
+    name = input("Nome: ").strip()
+    surname = input("Sobrenome: ").strip()
 
-if not name:
-    print("Erro: o nome não pode ficar vazio.")
-elif not surname:
-    print("Erro: o sobrenome não pode ficar vazio.")
-else:
+    if not name or not surname:
+        print("Erro: nome e sobrenome são obrigatórios.")
+        return
+
     generated_email = (
         f"{normalize_text(name)}.{normalize_text(surname)}@example.com"
     )
 
-    email = input(
-        f"E-mail [{generated_email}]: "
-    ).strip()
-
-    if not email:
-        email = generated_email
+    email = input(f"E-mail [{generated_email}]: ").strip()
+    email = email or generated_email
 
     if not is_valid_email(email):
         print("Erro: formato de e-mail inválido.")
-    else:
-        create_student(name, surname, email)
-        print("Aluno cadastrado com sucesso.")
+        return
+
+    create_student(name, surname, email)
+    print("Aluno cadastrado com sucesso.")
+
+
+def show_students():
+    students = list_students()
+
+    if not students:
+        print("Nenhum aluno cadastrado.")
+        return
+
+    table = Table(title="Alunos cadastrados")
+
+    table.add_column("ID", justify="right", style="cyan")
+    table.add_column("Nome", style="green")
+    table.add_column("Sobrenome", style="green")
+    table.add_column("E-mail", style="yellow")
+
+    for student in students:
+        student_id, name, surname, email = student
+        table.add_row(str(student_id), name, surname, email)
+
+    Console().print(table)
+
+
+print("1 - Cadastrar aluno")
+print("2 - Listar alunos")
+
+option = input("Escolha uma opção: ").strip()
+
+if option == "1":
+    register_student()
+elif option == "2":
+    show_students()
+else:
+    print("Opção inválida.")
