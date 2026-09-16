@@ -4,7 +4,13 @@ import unicodedata
 from rich.console import Console
 from rich.table import Table
 
-from database import create_student, list_students, search_students
+from database import (
+    create_student,
+    get_student,
+    list_students,
+    search_students,
+    update_student,
+)
 
 
 def normalize_text(value):
@@ -117,11 +123,76 @@ def search_student():
     Console().print(table)
 
 
+def edit_student():
+    student_id = input("ID do aluno: ").strip()
+
+    if not student_id.isdigit():
+        print("Erro: o ID deve ser um número.")
+        return
+
+    student = get_student(int(student_id))
+
+    if not student:
+        print("Erro: aluno não encontrado.")
+        return
+
+    _, current_name, current_surname, current_email = student
+
+    print("\nDados atuais:")
+    print(f"Nome: {current_name}")
+    print(f"Sobrenome: {current_surname}")
+    print(f"E-mail: {current_email}")
+
+    name = input(f"Novo nome [{current_name}]: ").strip()
+    surname = input(
+        f"Novo sobrenome [{current_surname}]: "
+    ).strip()
+
+    name = name or current_name
+    surname = surname or current_surname
+
+    if not is_valid_name(name):
+        print("Erro: o nome deve conter apenas letras.")
+        return
+
+    if not is_valid_name(surname):
+        print("Erro: o sobrenome deve conter apenas letras.")
+        return
+
+    generated_email = (
+        f"{normalize_text(name)}.{normalize_text(surname)}@example.com"
+    )
+
+    print(f"E-mail sugerido: {generated_email}")
+
+    email = input(
+        f"Novo e-mail [{generated_email}]: "
+    ).strip()
+
+    email = email or generated_email
+
+    if not is_valid_email(email):
+        print("Erro: formato de e-mail inválido.")
+        return
+
+    updated = update_student(
+        int(student_id),
+        name,
+        surname,
+        email,
+    )
+
+    if updated:
+        print("Aluno atualizado com sucesso.")
+    else:
+        print("Erro: não foi possível atualizar o aluno.")
+
 while True:
     print("\n=== Registro de Alunos ===")
     print("1 - Cadastrar aluno")
     print("2 - Listar alunos")
     print("3 - Buscar aluno")
+    print("4 - Atualizar aluno")
     print("0 - Sair")
 
     option = input("Escolha uma opção: ").strip()
@@ -132,6 +203,8 @@ while True:
         show_students()
     elif option == "3":
         search_student()
+    elif option == "4":
+        edit_student()
     elif option == "0":
         print("Programa encerrado.")
         break

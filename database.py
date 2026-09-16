@@ -16,15 +16,20 @@ def get_connection():
     )
 
 def create_student(name, surname, email):
-    with get_connection() as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
-                INSERT INTO students (name, surname, email)
-                VALUES (%s, %s, %s);
-                """,
-                (name, surname, email),
-            )
+    try:
+        with get_connection() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    INSERT INTO students (name, surname, email)
+                    VALUES (%s, %s, %s);
+                    """,
+                    (name, surname, email),
+                )
+        return True
+
+    except psycopg.errors.UniqueViolation:
+        return False
 
 def list_students():
     with get_connection() as connection:
@@ -51,4 +56,32 @@ def search_students(term):
                 """,
                 (term, f"%{term}%", f"%{term}%"),
             )
-            return cursor.fetchall()          
+            return cursor.fetchall()
+def update_student(student_id, name, surname, email):
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                UPDATE students
+                SET name = %s,
+                    surname = %s,
+                    email = %s
+                WHERE id = %s;
+                """,
+                (name, surname, email, student_id),
+            )
+
+            return cursor.rowcount > 0    
+
+def get_student(student_id):
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT id, name, surname, email
+                FROM students
+                WHERE id = %s;
+                """,
+                (student_id,),
+            )
+            return cursor.fetchone()      
