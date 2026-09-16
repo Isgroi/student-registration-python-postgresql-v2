@@ -18,14 +18,31 @@ def is_valid_email(email):
     pattern = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
     return re.match(pattern, email) is not None
 
+def is_valid_name(value):
+    pattern = r"^[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[ '-][A-Za-zÀ-ÖØ-öø-ÿ]+)*$"
+    return re.match(pattern, value) is not None
+
 
 def register_student():
-    name = input("Nome: ").strip()
-    surname = input("Sobrenome: ").strip()
+    while True:
+        name = input("Nome: ").strip()
 
-    if not name or not surname:
-        print("Erro: nome e sobrenome são obrigatórios.")
-        return
+        if not name:
+            print("Erro: o nome não pode ficar vazio.")
+        elif not is_valid_name(name):
+            print("Erro: o nome deve conter apenas letras.")
+        else:
+            break
+
+    while True:
+        surname = input("Sobrenome: ").strip()
+
+        if not surname:
+            print("Erro: o sobrenome não pode ficar vazio.")
+        elif not is_valid_name(surname):
+            print("Erro: o sobrenome deve conter apenas letras.")
+        else:
+            break
 
     generated_email = (
         f"{normalize_text(name)}.{normalize_text(surname)}@example.com"
@@ -38,8 +55,12 @@ def register_student():
         print("Erro: formato de e-mail inválido.")
         return
 
-    create_student(name, surname, email)
-    print("Aluno cadastrado com sucesso.")
+    created = create_student(name, surname, email)
+
+    if created:
+        print("Aluno cadastrado com sucesso.")
+    else:
+        print("Erro: este e-mail já está cadastrado.")
 
 
 def show_students():
