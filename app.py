@@ -16,27 +16,27 @@ def is_valid_email(email):
     return re.match(pattern, email) is not None
 
 
-name = input("First name: ").strip()
-surname = input("Surname: ").strip()
+name = input("Nome: ").strip()
+surname = input("Sobrenome: ").strip()
 
 if not name:
-    print("Error: first name cannot be empty.")
+    print("Erro: o nome não pode ficar vazio.")
 elif not surname:
-    print("Error: surname cannot be empty.")
+    print("Erro: o sobrenome não pode ficar vazio.")
 else:
     generated_email = (
         f"{normalize_text(name)}.{normalize_text(surname)}@example.com"
     )
 
     email = input(
-        f"Email [{generated_email}]: "
+        f"E-mail [{generated_email}]: "
     ).strip()
 
     if not email:
         email = generated_email
 
     if not is_valid_email(email):
-        print("Error: invalid email format.")
+        print("Erro: formato de e-mail inválido.")
     else:
         create_student(name, surname, email)
-        print("Student registered successfully.")
+        print("Aluno cadastrado com sucesso.")

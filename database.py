@@ -15,14 +15,26 @@ def get_connection():
         password=os.getenv("DB_PASSWORD"),
     )
 
-
-def create_student(name, email):
+def create_student(name, surname, email):
     with get_connection() as connection:
         with connection.cursor() as cursor:
             cursor.execute(
                 """
-                INSERT INTO students (name, email)
-                VALUES (%s, %s);
+                INSERT INTO students (name, surname, email)
+                VALUES (%s, %s, %s);
                 """,
-                (name, email),
+                (name, surname, email),
             )
+            
+def list_students():
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT id, name, email, created_at
+                FROM students
+                ORDER BY id;
+                """
+            )
+            return cursor.fetchall()            
+            
