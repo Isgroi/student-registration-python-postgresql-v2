@@ -63,14 +63,20 @@ def show_students():
     Console().print(table)
 
 
-print("1 - Cadastrar aluno")
-print("2 - Listar alunos")
+while True:
+    print("\n=== Registro de Alunos ===")
+    print("1 - Cadastrar aluno")
+    print("2 - Listar alunos")
+    print("0 - Sair")
 
-option = input("Escolha uma opção: ").strip()
+    option = input("Escolha uma opção: ").strip()
 
-if option == "1":
-    register_student()
-elif option == "2":
-    show_students()
-else:
-    print("Opção inválida.")
+    if option == "1":
+        register_student()
+    elif option == "2":
+        show_students()
+    elif option == "0":
+        print("Programa encerrado.")
+        break
+    else:
+        print("Opção inválida.")
