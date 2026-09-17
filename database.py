@@ -58,20 +58,27 @@ def search_students(term):
             )
             return cursor.fetchall()
 def update_student(student_id, name, surname, email):
-    with get_connection() as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
-                UPDATE students
-                SET name = %s,
-                    surname = %s,
-                    email = %s
-                WHERE id = %s;
-                """,
-                (name, surname, email, student_id),
-            )
+    try:
+        with get_connection() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    UPDATE students
+                    SET name = %s,
+                        surname = %s,
+                        email = %s
+                    WHERE id = %s;
+                    """,
+                    (name, surname, email, student_id),
+                )
 
-            return cursor.rowcount > 0    
+                if cursor.rowcount == 0:
+                    return False
+
+                return True
+
+    except psycopg.errors.UniqueViolation:
+        return None
 
 def get_student(student_id):
     with get_connection() as connection:
@@ -85,7 +92,7 @@ def get_student(student_id):
                 (student_id,),
             )
             return cursor.fetchone()
-            
+
 def delete_student(student_id):
     with get_connection() as connection:
         with connection.cursor() as cursor:

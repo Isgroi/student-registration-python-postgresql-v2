@@ -177,16 +177,18 @@ def edit_student():
         return
 
     updated = update_student(
-        int(student_id),
-        name,
-        surname,
-        email,
-    )
+    int(student_id),
+    name,
+    surname,
+    email,
+)
 
-    if updated:
+    if updated is True:
         print("Aluno atualizado com sucesso.")
+    elif updated is False:
+        print("Erro: aluno não encontrado.")
     else:
-        print("Erro: não foi possível atualizar o aluno.")
+        print("Erro: este e-mail já está sendo usado.")
 
 def remove_student():
     student_id = input("ID do aluno: ").strip()
