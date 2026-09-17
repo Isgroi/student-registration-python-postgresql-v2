@@ -104,4 +104,15 @@ def delete_student(student_id):
                 (student_id,),
             )
 
-            return cursor.rowcount > 0      
+            return cursor.rowcount > 0   
+
+def delete_student_by_email(email):
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                DELETE FROM students
+                WHERE email = %s;
+                """,
+                (email,),
+            )   
