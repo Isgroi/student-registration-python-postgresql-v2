@@ -54,3 +54,13 @@ def test_duplicate_email_is_rejected(monkeypatch):
     assert second_created is False
 
     database.delete_student_by_email(email)
+
+def test_get_missing_student(monkeypatch):
+    monkeypatch.setenv(
+        "DB_NAME",
+        "student_registration_test",
+    )
+
+    student = database.get_student(999999)
+
+    assert student is None
