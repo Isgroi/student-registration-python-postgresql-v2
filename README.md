@@ -144,3 +144,11 @@ This project is still in progress.
 
 I am building it one step at a time and using each new feature as an opportunity
 to understand the code better.
+
+## Running the tests
+
+With the virtual environment active, run:
+
+```bash
+python -m pytest -q
+```
