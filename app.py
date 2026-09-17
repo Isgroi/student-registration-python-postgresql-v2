@@ -1,5 +1,6 @@
 import re
 import unicodedata
+import psycopg
 
 from rich.console import Console
 from rich.table import Table
@@ -252,5 +253,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
-    
+    try:
+        main()
+    except psycopg.OperationalError:
+        print("Erro: não foi possível conectar ao PostgreSQL.")
+        print("Verifique se o banco está ligado e se os dados do .env estão corretos.")
