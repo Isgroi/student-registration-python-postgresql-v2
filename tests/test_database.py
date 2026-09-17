@@ -27,3 +27,30 @@ def test_create_and_get_student(monkeypatch):
     assert students[0][3] == email
 
     database.delete_student_by_email(email)
+
+def test_duplicate_email_is_rejected(monkeypatch):
+    monkeypatch.setenv(
+        "DB_NAME",
+        "student_registration_test",
+    )
+
+    email = "duplicate.student@example.com"
+
+    database.delete_student_by_email(email)
+
+    first_created = database.create_student(
+        "First",
+        "Student",
+        email,
+    )
+
+    second_created = database.create_student(
+        "Second",
+        "Student",
+        email,
+    )
+
+    assert first_created is True
+    assert second_created is False
+
+    database.delete_student_by_email(email)
