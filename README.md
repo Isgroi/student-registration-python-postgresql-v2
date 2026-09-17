@@ -152,3 +152,15 @@ With the virtual environment active, run:
 ```bash
 python -m pytest -q
 ```
+
+## Database connection errors
+
+If PostgreSQL is unavailable, the application displays a simple error message instead of a long traceback.
+
+Se o PostgreSQL estiver desligado ou o arquivo `.env` estiver incorreto, o programa informa o problema de forma clara.
+
+Make sure that:
+
+- PostgreSQL is running;
+- the database exists;
+- the values in `.env` are correct.
