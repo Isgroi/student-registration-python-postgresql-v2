@@ -84,4 +84,17 @@ def get_student(student_id):
                 """,
                 (student_id,),
             )
-            return cursor.fetchone()      
+            return cursor.fetchone()
+            
+def delete_student(student_id):
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                DELETE FROM students
+                WHERE id = %s;
+                """,
+                (student_id,),
+            )
+
+            return cursor.rowcount > 0      

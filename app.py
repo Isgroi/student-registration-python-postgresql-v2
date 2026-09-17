@@ -6,6 +6,7 @@ from rich.table import Table
 
 from database import (
     create_student,
+    delete_student,
     get_student,
     list_students,
     search_students,
@@ -187,12 +188,45 @@ def edit_student():
     else:
         print("Erro: não foi possível atualizar o aluno.")
 
+def remove_student():
+    student_id = input("ID do aluno: ").strip()
+
+    if not student_id.isdigit():
+        print("Erro: o ID deve ser um número.")
+        return
+
+    student = get_student(int(student_id))
+
+    if not student:
+        print("Erro: aluno não encontrado.")
+        return
+
+    _, name, surname, email = student
+
+    print("\nAluno selecionado:")
+    print(f"Nome: {name} {surname}")
+    print(f"E-mail: {email}")
+
+    confirmation = input("Deseja realmente excluir? (s/n): ").strip().lower()
+
+    if confirmation != "s":
+        print("Exclusão cancelada.")
+        return
+
+    deleted = delete_student(int(student_id))
+
+    if deleted:
+        print("Aluno excluído com sucesso.")
+    else:
+        print("Erro: não foi possível excluir o aluno.")
+
 while True:
     print("\n=== Registro de Alunos ===")
     print("1 - Cadastrar aluno")
     print("2 - Listar alunos")
     print("3 - Buscar aluno")
     print("4 - Atualizar aluno")
+    print("5 - Excluir aluno")
     print("0 - Sair")
 
     option = input("Escolha uma opção: ").strip()
@@ -205,6 +239,8 @@ while True:
         search_student()
     elif option == "4":
         edit_student()
+    elif option == "5":
+        remove_student()
     elif option == "0":
         print("Programa encerrado.")
         break
