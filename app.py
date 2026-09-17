@@ -222,29 +222,35 @@ def remove_student():
     else:
         print("Erro: não foi possível excluir o aluno.")
 
-while True:
-    print("\n=== Registro de Alunos ===")
-    print("1 - Cadastrar aluno")
-    print("2 - Listar alunos")
-    print("3 - Buscar aluno")
-    print("4 - Atualizar aluno")
-    print("5 - Excluir aluno")
-    print("0 - Sair")
+def main():
+    while True:
+        print("\n=== Registro de Alunos ===")
+        print("1 - Cadastrar aluno")
+        print("2 - Listar alunos")
+        print("3 - Buscar aluno")
+        print("4 - Atualizar aluno")
+        print("5 - Excluir aluno")
+        print("0 - Sair")
 
-    option = input("Escolha uma opção: ").strip()
+        option = input("Escolha uma opção: ").strip()
 
-    if option == "1":
-        register_student()
-    elif option == "2":
-        show_students()
-    elif option == "3":
-        search_student()
-    elif option == "4":
-        edit_student()
-    elif option == "5":
-        remove_student()
-    elif option == "0":
-        print("Programa encerrado.")
-        break
-    else:
-        print("Opção inválida.")
+        if option == "1":
+            register_student()
+        elif option == "2":
+            show_students()
+        elif option == "3":
+            search_student()
+        elif option == "4":
+            edit_student()
+        elif option == "5":
+            remove_student()
+        elif option == "0":
+            print("Programa encerrado.")
+            break
+        else:
+            print("Opção inválida.")
+
+
+if __name__ == "__main__":
+    main()
+    
