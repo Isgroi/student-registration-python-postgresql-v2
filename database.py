@@ -6,11 +6,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def get_connection():
+def get_connection(database_name=None):
     return psycopg.connect(
         host=os.getenv("DB_HOST"),
         port=os.getenv("DB_PORT"),
-        dbname=os.getenv("DB_NAME"),
+        dbname=database_name or os.getenv("DB_NAME"),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
     )
@@ -50,8 +50,8 @@ def search_students(term):
                 SELECT id, name, surname, email
                 FROM students
                 WHERE CAST(id AS TEXT) = %s
-                   OR name ILIKE %s
-                   OR surname ILIKE %s
+                    OR name ILIKE %s
+                    OR surname ILIKE %s
                 ORDER BY id;
                 """,
                 (term, f"%{term}%", f"%{term}%"),
