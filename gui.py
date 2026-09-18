@@ -1,8 +1,12 @@
-import tkinter as tk
+import customtkinter as ctk
 from tkinter import messagebox
 
 from app import is_valid_email, is_valid_name, normalize_text
 from database import create_student
+
+
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
 
 
 def register_student():
@@ -11,24 +15,15 @@ def register_student():
     email = email_entry.get().strip()
 
     if not name or not surname:
-        messagebox.showerror(
-            "Erro",
-            "Nome e sobrenome são obrigatórios.",
-        )
+        messagebox.showerror("Erro", "Nome e sobrenome são obrigatórios.")
         return
 
     if not is_valid_name(name):
-        messagebox.showerror(
-            "Erro",
-            "O nome deve conter apenas letras.",
-        )
+        messagebox.showerror("Erro", "O nome deve conter apenas letras.")
         return
 
     if not is_valid_name(surname):
-        messagebox.showerror(
-            "Erro",
-            "O sobrenome deve conter apenas letras.",
-        )
+        messagebox.showerror("Erro", "O sobrenome deve conter apenas letras.")
         return
 
     if not email:
@@ -38,10 +33,7 @@ def register_student():
         )
 
     if not is_valid_email(email):
-        messagebox.showerror(
-            "Erro",
-            "Digite um e-mail válido.",
-        )
+        messagebox.showerror("Erro", "Digite um e-mail válido.")
         return
 
     created = create_student(name, surname, email)
@@ -58,45 +50,65 @@ def register_student():
         "Aluno cadastrado com sucesso.",
     )
 
-    name_entry.delete(0, tk.END)
-    surname_entry.delete(0, tk.END)
-    email_entry.delete(0, tk.END)
+    name_entry.delete(0, "end")
+    surname_entry.delete(0, "end")
+    email_entry.delete(0, "end")
 
 
-window = tk.Tk()
+window = ctk.CTk()
 window.title("Registro de Alunos")
-window.geometry("500x350")
+window.geometry("600x500")
+window.resizable(False, False)
 
-title = tk.Label(
-    window,
-    text="Cadastrar aluno",
-    font=("Arial", 18, "bold"),
+card = ctk.CTkFrame(window, corner_radius=20)
+card.pack(padx=60, pady=40, fill="both", expand=True)
+
+title = ctk.CTkLabel(
+    card,
+    text="Registro de Alunos",
+    font=ctk.CTkFont(size=28, weight="bold"),
 )
-title.pack(pady=20)
+title.pack(pady=(35, 5))
 
-name_label = tk.Label(window, text="Nome:")
-name_label.pack()
+subtitle = ctk.CTkLabel(
+    card,
+    text="Cadastre um novo aluno",
+    text_color="gray",
+)
+subtitle.pack(pady=(0, 30))
 
-name_entry = tk.Entry(window, width=40)
-name_entry.pack(pady=5)
+name_entry = ctk.CTkEntry(
+    card,
+    width=380,
+    height=42,
+    placeholder_text="Nome",
+)
+name_entry.pack(pady=8)
 
-surname_label = tk.Label(window, text="Sobrenome:")
-surname_label.pack()
+surname_entry = ctk.CTkEntry(
+    card,
+    width=380,
+    height=42,
+    placeholder_text="Sobrenome",
+)
+surname_entry.pack(pady=8)
 
-surname_entry = tk.Entry(window, width=40)
-surname_entry.pack(pady=5)
+email_entry = ctk.CTkEntry(
+    card,
+    width=380,
+    height=42,
+    placeholder_text="E-mail opcional",
+)
+email_entry.pack(pady=8)
 
-email_label = tk.Label(window, text="E-mail:")
-email_label.pack()
-
-email_entry = tk.Entry(window, width=40)
-email_entry.pack(pady=5)
-
-register_button = tk.Button(
-    window,
+register_button = ctk.CTkButton(
+    card,
     text="Cadastrar aluno",
+    width=380,
+    height=42,
+    corner_radius=10,
     command=register_student,
 )
-register_button.pack(pady=20)
+register_button.pack(pady=30)
 
 window.mainloop()
