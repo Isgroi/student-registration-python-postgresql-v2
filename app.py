@@ -26,6 +26,7 @@ def is_valid_email(email):
     pattern = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
     return re.match(pattern, email) is not None
 
+
 def is_valid_name(value):
     pattern = r"^[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[ '-][A-Za-zÀ-ÖØ-öø-ÿ]+)*$"
     return re.match(pattern, value) is not None
@@ -178,11 +179,11 @@ def edit_student():
         return
 
     updated = update_student(
-    int(student_id),
-    name,
-    surname,
-    email,
-)
+        int(student_id),
+        name,
+        surname,
+        email,
+    )
 
     if updated is True:
         print("Aluno atualizado com sucesso.")
@@ -190,6 +191,7 @@ def edit_student():
         print("Erro: aluno não encontrado.")
     else:
         print("Erro: este e-mail já está sendo usado.")
+
 
 def remove_student():
     student_id = input("ID do aluno: ").strip()
@@ -222,6 +224,7 @@ def remove_student():
         print("Aluno excluído com sucesso.")
     else:
         print("Erro: não foi possível excluir o aluno.")
+
 
 def main():
     while True:
