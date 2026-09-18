@@ -16,6 +16,10 @@ ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
 
+def get_initials(name, surname):
+    return f"{name[0]}{surname[0]}".upper()
+
+
 def show_dashboard(user):
     window = ctk.CTk()
     window.title("Registro de Alunos")
@@ -55,10 +59,7 @@ def show_dashboard(user):
         ctk.CTkLabel(
             edit_window,
             text="✎ Editar aluno",
-            font=ctk.CTkFont(
-                size=24,
-                weight="bold",
-            ),
+            font=ctk.CTkFont(size=24, weight="bold"),
         ).pack(pady=(30, 25))
 
         name_input = ctk.CTkEntry(
@@ -161,22 +162,69 @@ def show_dashboard(user):
 
         _, name, surname, email = student
 
-        confirmation = CTkMessagebox(
-            title="Confirmar exclusão",
-            message=f"Excluir {name} {surname}?\n\n{email}",
-            icon="question",
-            option_1="Cancelar",
-            option_2="Excluir",
-        ).get()
+        confirm_window = ctk.CTkToplevel(window)
+        confirm_window.title("Confirmar exclusão")
+        confirm_window.geometry("430x260")
+        confirm_window.resizable(False, False)
+        confirm_window.grab_set()
 
-        if confirmation != "Excluir":
-            return
+        initials = get_initials(name, surname)
 
-        if delete_student(student_id):
-            show_success("Aluno excluído com sucesso.")
-            refresh_students()
-        else:
-            show_error("Não foi possível excluir o aluno.")
+        ctk.CTkLabel(
+            confirm_window,
+            text=initials,
+            width=58,
+            height=58,
+            corner_radius=29,
+            fg_color="#777777",
+            text_color="white",
+            font=ctk.CTkFont(size=20, weight="bold"),
+        ).pack(pady=(25, 10))
+
+        ctk.CTkLabel(
+            confirm_window,
+            text=f"Excluir {name} {surname}?",
+            font=ctk.CTkFont(size=15, weight="bold"),
+        ).pack(pady=3)
+
+        ctk.CTkLabel(
+            confirm_window,
+            text=email,
+            text_color="gray",
+        ).pack(pady=3)
+
+        buttons_frame = ctk.CTkFrame(
+            confirm_window,
+            fg_color="transparent",
+        )
+        buttons_frame.pack(pady=20)
+
+        def confirm_delete():
+            if delete_student(student_id):
+                confirm_window.destroy()
+                show_success("Aluno excluído com sucesso.")
+                refresh_students()
+            else:
+                confirm_window.destroy()
+                show_error("Não foi possível excluir o aluno.")
+
+        ctk.CTkButton(
+            buttons_frame,
+            text="Excluir",
+            width=130,
+            fg_color="#b83232",
+            hover_color="#922b2b",
+            command=confirm_delete,
+        ).pack(side="left", padx=6)
+
+        ctk.CTkButton(
+            buttons_frame,
+            text="Cancelar",
+            width=130,
+            fg_color="transparent",
+            border_width=1,
+            command=confirm_window.destroy,
+        ).pack(side="left", padx=6)
 
     def refresh_students():
         for widget in students_frame.winfo_children():
@@ -189,6 +237,7 @@ def show_dashboard(user):
         )
 
         headers = [
+            "",
             "ID",
             "Nome",
             "Sobrenome",
@@ -212,9 +261,27 @@ def show_dashboard(user):
 
         for row, student in enumerate(students, start=1):
             student_id, name, surname, email = student
+            initials = get_initials(name, surname)
             values = [student_id, name, surname, email]
 
-            for column, value in enumerate(values):
+            avatar = ctk.CTkLabel(
+                students_frame,
+                text=initials,
+                width=34,
+                height=34,
+                corner_radius=17,
+                fg_color="#2878c8",
+                text_color="white",
+                font=ctk.CTkFont(weight="bold"),
+            )
+            avatar.grid(
+                row=row,
+                column=0,
+                padx=8,
+                pady=5,
+            )
+
+            for column, value in enumerate(values, start=1):
                 ctk.CTkLabel(
                     students_frame,
                     text=str(value),
@@ -236,7 +303,7 @@ def show_dashboard(user):
                     edit_selected_student(current_id),
             ).grid(
                 row=row,
-                column=4,
+                column=5,
                 padx=4,
                 pady=5,
             )
@@ -252,7 +319,7 @@ def show_dashboard(user):
                     delete_selected_student(current_id),
             ).grid(
                 row=row,
-                column=5,
+                column=6,
                 padx=4,
                 pady=5,
             )
@@ -309,10 +376,7 @@ def show_dashboard(user):
     ctk.CTkLabel(
         header,
         text=f"Olá, {user['username']}",
-        font=ctk.CTkFont(
-            size=28,
-            weight="bold",
-        ),
+        font=ctk.CTkFont(size=28, weight="bold"),
     ).pack(side="left")
 
     total_label = ctk.CTkLabel(
@@ -320,10 +384,7 @@ def show_dashboard(user):
         text="0 aluno(s) cadastrado(s)",
         text_color="gray",
     )
-    total_label.pack(
-        side="right",
-        pady=8,
-    )
+    total_label.pack(side="right", pady=8)
 
     content = ctk.CTkFrame(
         window,
@@ -349,14 +410,8 @@ def show_dashboard(user):
     ctk.CTkLabel(
         form_frame,
         text="Novo cadastro",
-        font=ctk.CTkFont(
-            size=20,
-            weight="bold",
-        ),
-    ).pack(
-        padx=30,
-        pady=(30, 25),
-    )
+        font=ctk.CTkFont(size=20, weight="bold"),
+    ).pack(padx=30, pady=(30, 25))
 
     name_entry = ctk.CTkEntry(
         form_frame,
@@ -364,10 +419,7 @@ def show_dashboard(user):
         height=42,
         placeholder_text="Nome",
     )
-    name_entry.pack(
-        padx=30,
-        pady=8,
-    )
+    name_entry.pack(padx=30, pady=8)
 
     surname_entry = ctk.CTkEntry(
         form_frame,
@@ -375,10 +427,7 @@ def show_dashboard(user):
         height=42,
         placeholder_text="Sobrenome",
     )
-    surname_entry.pack(
-        padx=30,
-        pady=8,
-    )
+    surname_entry.pack(padx=30, pady=8)
 
     email_entry = ctk.CTkEntry(
         form_frame,
@@ -386,10 +435,7 @@ def show_dashboard(user):
         height=42,
         placeholder_text="E-mail opcional",
     )
-    email_entry.pack(
-        padx=30,
-        pady=8,
-    )
+    email_entry.pack(padx=30, pady=8)
 
     ctk.CTkButton(
         form_frame,
@@ -397,10 +443,7 @@ def show_dashboard(user):
         width=300,
         height=42,
         command=register_student,
-    ).pack(
-        padx=30,
-        pady=(25, 10),
-    )
+    ).pack(padx=30, pady=(25, 10))
 
     ctk.CTkButton(
         form_frame,
@@ -410,10 +453,7 @@ def show_dashboard(user):
         fg_color="transparent",
         border_width=1,
         command=refresh_students,
-    ).pack(
-        padx=30,
-        pady=(0, 30),
-    )
+    ).pack(padx=30, pady=(0, 30))
 
     list_frame = ctk.CTkFrame(
         content,
@@ -428,10 +468,7 @@ def show_dashboard(user):
     ctk.CTkLabel(
         list_frame,
         text="Alunos cadastrados",
-        font=ctk.CTkFont(
-            size=20,
-            weight="bold",
-        ),
+        font=ctk.CTkFont(size=20, weight="bold"),
     ).pack(
         anchor="w",
         padx=25,
@@ -468,10 +505,7 @@ def show_login():
             )
             return
 
-        user = authenticate_user(
-            username,
-            password,
-        )
+        user = authenticate_user(username, password)
 
         if not user:
             CTkMessagebox(
@@ -498,13 +532,8 @@ def show_login():
     ctk.CTkLabel(
         card,
         text="Acesso administrativo",
-        font=ctk.CTkFont(
-            size=24,
-            weight="bold",
-        ),
-    ).pack(
-        pady=(35, 25),
-    )
+        font=ctk.CTkFont(size=24, weight="bold"),
+    ).pack(pady=(35, 25))
 
     username_entry = ctk.CTkEntry(
         card,
