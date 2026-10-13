@@ -8,6 +8,7 @@ from database import (
     delete_student,
     get_student,
     list_students,
+    search_students,
     update_student,
 )
 
@@ -131,8 +132,8 @@ def show_dashboard(user):
                 show_error("Aluno não encontrado.")
                 return
 
-            show_success("Aluno atualizado com sucesso.")
             edit_window.destroy()
+            show_success("Aluno atualizado com sucesso.")
             refresh_students()
 
         ctk.CTkButton(
@@ -200,12 +201,13 @@ def show_dashboard(user):
         buttons_frame.pack(pady=20)
 
         def confirm_delete():
-            if delete_student(student_id):
-                confirm_window.destroy()
+            deleted = delete_student(student_id)
+            confirm_window.destroy()
+
+            if deleted:
                 show_success("Aluno excluído com sucesso.")
                 refresh_students()
             else:
-                confirm_window.destroy()
                 show_error("Não foi possível excluir o aluno.")
 
         ctk.CTkButton(
@@ -226,15 +228,23 @@ def show_dashboard(user):
             command=confirm_window.destroy,
         ).pack(side="left", padx=6)
 
-    def refresh_students():
+    def refresh_students(term=None):
         for widget in students_frame.winfo_children():
             widget.destroy()
 
-        students = list_students()
+        if term is None:
+            term = search_entry.get().strip()
 
-        total_label.configure(
-            text=f"{len(students)} aluno(s) cadastrado(s)"
-        )
+        if term:
+            students = search_students(term)
+            total_label.configure(
+                text=f"{len(students)} resultado(s) encontrado(s)"
+            )
+        else:
+            students = list_students()
+            total_label.configure(
+                text=f"{len(students)} aluno(s) cadastrado(s)"
+            )
 
         headers = [
             "",
@@ -246,10 +256,10 @@ def show_dashboard(user):
             "Excluir",
         ]
 
-        for column, header in enumerate(headers):
+        for column, header_text in enumerate(headers):
             ctk.CTkLabel(
                 students_frame,
-                text=header,
+                text=header_text,
                 font=ctk.CTkFont(weight="bold"),
             ).grid(
                 row=0,
@@ -363,6 +373,14 @@ def show_dashboard(user):
 
         refresh_students()
 
+    def clear_search():
+        search_entry.delete(0, "end")
+        refresh_students("")
+
+    def logout():
+        window.destroy()
+        show_login()
+
     header = ctk.CTkFrame(
         window,
         fg_color="transparent",
@@ -384,6 +402,14 @@ def show_dashboard(user):
         text="0 aluno(s) cadastrado(s)",
         text_color="gray",
     )
+    ctk.CTkButton(
+        header,
+        text="Sair",
+        width=70,
+        fg_color="transparent",
+        border_width=1,
+        command=logout,
+    ).pack(side="right", padx=(15, 0))
     total_label.pack(side="right", pady=8)
 
     content = ctk.CTkFrame(
@@ -474,6 +500,30 @@ def show_dashboard(user):
         padx=25,
         pady=(25, 10),
     )
+
+    search_frame = ctk.CTkFrame(list_frame, fg_color="transparent")
+    search_frame.pack(fill="x", padx=15, pady=(0, 10))
+
+    search_entry = ctk.CTkEntry(
+        search_frame,
+        height=38,
+        placeholder_text="Buscar por ID, nome, sobrenome ou e-mail",
+    )
+    search_entry.pack(side="left", fill="x", expand=True, padx=(0, 8))
+    search_entry.bind(
+        "<KeyRelease>",
+        lambda event: refresh_students(search_entry.get().strip()),
+    )
+
+    ctk.CTkButton(
+        search_frame,
+        text="Limpar busca",
+        width=110,
+        height=38,
+        fg_color="transparent",
+        border_width=1,
+        command=clear_search,
+    ).pack(side="right")
 
     students_frame = ctk.CTkScrollableFrame(list_frame)
     students_frame.pack(

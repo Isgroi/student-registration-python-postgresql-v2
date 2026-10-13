@@ -52,11 +52,18 @@ def search_students(term):
                 WHERE CAST(id AS TEXT) = %s
                     OR name ILIKE %s
                     OR surname ILIKE %s
+                    OR email ILIKE %s
                 ORDER BY id;
                 """,
-                (term, f"%{term}%", f"%{term}%"),
+                (
+                    term,
+                    f"%{term}%",
+                    f"%{term}%",
+                    f"%{term}%",
+                ),
             )
             return cursor.fetchall()
+
 def update_student(student_id, name, surname, email):
     try:
         with get_connection() as connection:
@@ -115,4 +122,4 @@ def delete_student_by_email(email):
                 WHERE email = %s;
                 """,
                 (email,),
-            )   
+            )
