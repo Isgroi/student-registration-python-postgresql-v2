@@ -1,4 +1,7 @@
 import customtkinter as ctk
+import csv
+
+from tkinter import filedialog
 from CTkMessagebox import CTkMessagebox
 
 from app import is_valid_email, is_valid_name, normalize_text
@@ -377,6 +380,27 @@ def show_dashboard(user):
         search_entry.delete(0, "end")
         refresh_students("")
 
+    def export_students():
+        path = filedialog.asksaveasfilename(
+            parent=window,
+            title="Salvar lista de alunos",
+            defaultextension=".csv",
+            filetypes=[("Arquivo CSV", "*.csv")],
+            initialfile="alunos.csv",
+        )
+
+        if not path:
+            return
+        
+        students = list_students()
+
+        with open(path, "w", encoding="utf-8-sig", newline="") as file:
+            writer = csv.writer(file, delimiter=";")
+            writer.writerow(["ID", "Nome", "Sobrenome", "E-mail"])
+            writer.writerows(students)
+                
+        show_success(f"{len(students)} aluno(s) exportado(s) com sucesso.")
+
     def logout():
         window.destroy()
         show_login()
@@ -525,6 +549,14 @@ def show_dashboard(user):
         command=clear_search,
     ).pack(side="right")
 
+    ctk.CTkButton(
+        search_frame,
+        text="Exportar todos",
+        width=110,
+        height=38,
+        command=export_students,
+    ).pack(side="right", padx=(0, 8))
+
     students_frame = ctk.CTkScrollableFrame(list_frame)
     students_frame.pack(
         fill="both",
@@ -609,6 +641,8 @@ def show_login():
         height=42,
         command=login,
     ).pack(pady=25)
+    
+    window.bind("<Return>", lambda event: login())
 
     window.mainloop()
 
