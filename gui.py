@@ -394,12 +394,16 @@ def show_dashboard(user):
         
         students = list_students()
 
-        with open(path, "w", encoding="utf-8-sig", newline="") as file:
-            writer = csv.writer(file, delimiter=";")
-            writer.writerow(["ID", "Nome", "Sobrenome", "E-mail"])
-            writer.writerows(students)
+        try:
+            with open(path, "w", encoding="utf-8-sig", newline="") as file:
+                writer = csv.writer(file, delimiter=";")
+                writer.writerow(["ID", "Nome", "Sobrenome", "E-mail"])
+                writer.writerows(students)
+        except OSError as error:
+            show_error(f"Não foi possível salvar o CSV:\n{error}")
+            return
                 
-        show_success(f"{len(students)} aluno(s) exportado(s) com sucesso.")
+        show_success(f"{len(students)} aluno(s) exportado(s) para:\n{path}")
 
     def logout():
         window.destroy()
